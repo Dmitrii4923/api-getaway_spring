@@ -24,8 +24,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (registerLink) {
         const redirectUri = encodeURIComponent(`${window.location.origin}/index.html`);
-        const registrationUrl = `http://localhost:8180/realms/hospital/protocol/openid-connect/registrations?client_id=hospital-gateway&response_type=code&scope=openid&redirect_uri=${redirectUri}`;
-        const logoutUrl = `http://localhost:8180/realms/hospital/protocol/openid-connect/logout?post_logout_redirect_uri=${encodeURIComponent(registrationUrl)}&client_id=hospital-gateway`;
+        
+        const registrationUrl = `https://keycloak-production-cd3297f4.up.railway.app/realms/hostel/protocol/openid-connect/registrations?client_id=spring-app&response_type=code&scope=openid&redirect_uri=${redirectUri}`;
+        const logoutUrl = `https://keycloak-production-cd3297f4.up.railway.app/realms/hostel/protocol/openid-connect/logout?post_logout_redirect_uri=${encodeURIComponent(registrationUrl)}&client_id=spring-app`;
+        
         registerLink.href = logoutUrl;
     }
 
