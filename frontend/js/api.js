@@ -2,6 +2,8 @@ const API = (() => {
     const BASE = window.API_BASE || '';
     const TOKEN_URL = 'https://keycloak-production-cd3297f4.up.railway.app/realms/hostel/protocol/openid-connect/token';
     const CLIENT_ID = 'spring-app';
+    const CLIENT_SECRET = 'lGl8ytTS1FAGiNVAhEEjpEVOJTZmJ4Ne2oQTOiB4fNtNC0zxTwcAYrCeWjeCqIIcefLQE5m0NC6JT9tKquhGdq';
+    
     const TOKEN_KEY = 'access_token';
     const TOKEN_KEYS = ['access_token', 'accessToken', 'token', 'jwt', 'auth_token'];
     const REFRESH_KEY = 'refresh_token';
@@ -83,7 +85,13 @@ const API = (() => {
     }
 
     async function login(username, password) {
-        const body = new URLSearchParams({ grant_type: 'password', client_id: CLIENT_ID, username, password });
+        const body = new URLSearchParams({ 
+            grant_type: 'password', 
+            client_id: CLIENT_ID, 
+            client_secret: CLIENT_SECRET, 
+            username, 
+            password 
+        });
         let response;
         try {
             response = await fetch(TOKEN_URL, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
@@ -108,6 +116,7 @@ const API = (() => {
         const body = new URLSearchParams({
             grant_type: 'authorization_code',
             client_id: CLIENT_ID,
+            client_secret: CLIENT_SECRET,
             code: code,
             redirect_uri: window.location.origin + '/index.html'
         });
