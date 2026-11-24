@@ -1,0 +1,114 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  web:
+    resources:
+      static-locations: file:${FRONTEND_DIR:../frontend/},file:${FRONTEND_DIR:./frontend/},classpath:/static/
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/hospital
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: customer-service
+              uri: lb://CUSTOMER-SERVICE
+              predicates:
+                - Path=/api/customers/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    id: customerService
+                    statusCodes: 500,502,503,504
+            - id: vets-service
+              uri: lb://VETS-SERVICE
+              predicates:
+                - Path=/api/vets/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    id: vetsService
+                    statusCodes: 500,502,503,504
+            - id: visits-service
+              uri: lb://VISITS-SERVICE
+              predicates:
+                - Path=/api/visits/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    id: visitsService
+                    statusCodes: 500,502,503,504
+            - id: schedule-service
+              uri: lb://VISITS-SERVICE
+              predicates:
+                - Path=/api/schedule/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    id: scheduleService
+                    statusCodes: 500,502,503,504
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,circuitbreakers,circuitbreakerevents
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    circuitbreakers:
+      show-details: always
+    circuitbreakerevents:
+      enabled: true
+  health:
+    circuitbreakers:
+      enabled: true
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: health-portal-api-gateway
+    description: Единая точка входа портала «Здоровье»
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 10
+    instances:
+      customerService:
+        baseConfig: default
+      vetsService:
+        baseConfig: default
+      visitsService:
+        baseConfig: default
+      scheduleService:
+        baseConfig: default
+
+logging:
+  level:
+    root: INFO
+    com.hospital: INFO
