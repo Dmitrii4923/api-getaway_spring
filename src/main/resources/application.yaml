@@ -1,19 +1,23 @@
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 spring:
   application:
     name: api-gateway
   web:
     resources:
-      static-locations: file:${FRONTEND_DIR:../frontend/},file:${FRONTEND_DIR:./frontend/},classpath:/static/
+      static-locations: file:./frontend/,classpath:/static/
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8180/realms/hospital
+          issuer-uri: ${KEYCLOAK_ISSUER_URI}
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
       server:
         webmvc:
           routes:
@@ -57,7 +61,13 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_URL}
+  instance:
+    hostname: ${MY_HOSTNAME}
+    secure-port-enabled: true
+    non-secure-port-enabled: false
+    status-page-url: https://${MY_HOSTNAME}/actuator/info
+    health-check-url: https://${MY_HOSTNAME}/actuator/health
 
 management:
   endpoints:
