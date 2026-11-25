@@ -16,47 +16,38 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true
-          lower-case-service-id: true
-      server:
-        webmvc:
-          routes:
-            - id: customer-service
-              uri: lb://CUSTOMER-SERVICE
-              predicates:
-                - Path=/api/customers/**
-              filters:
-                - name: CircuitBreaker
-                  args:
-                    id: customerService
-                    statusCodes: 500,502,503,504
-            - id: vets-service
-              uri: lb://VETS-SERVICE
-              predicates:
-                - Path=/api/vets/**
-              filters:
-                - name: CircuitBreaker
-                  args:
-                    id: vetsService
-                    statusCodes: 500,502,503,504
-            - id: visits-service
-              uri: lb://VISITS-SERVICE
-              predicates:
-                - Path=/api/visits/**
-              filters:
-                - name: CircuitBreaker
-                  args:
-                    id: visitsService
-                    statusCodes: 500,502,503,504
-            - id: schedule-service
-              uri: lb://VISITS-SERVICE
-              predicates:
-                - Path=/api/schedule/**
-              filters:
-                - name: CircuitBreaker
-                  args:
-                    id: scheduleService
-                    statusCodes: 500,502,503,504
+          enabled: false         
+      httpclient:
+        connect-timeout: 30000    
+        response-timeout: 120s    
+      routes:
+        - id: customer-service
+          uri: https://customer-service-fcjf.onrender.com  
+          predicates:
+            - Path=/api/customers/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                id: customerService
+                statusCodes: 500,502,503,504
+        - id: vets-service
+          uri: https://vets-service.onrender.com           
+          predicates:
+            - Path=/api/vets/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                id: vetsService
+                statusCodes: 500,502,503,504
+        - id: visits-service
+          uri: https://visits-service.onrender.com       
+          predicates:
+            - Path=/api/visits/**,/api/schedule/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                id: visitsService
+                statusCodes: 500,502,503,504
 
 eureka:
   client:
