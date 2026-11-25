@@ -16,37 +16,37 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: false
+          enabled: true
+          lower-case-service-id: true
       httpclient:
         connect-timeout: 30000
         response-timeout: 120s
       routes:
         - id: customer-service
-          uri: https://customer-service-fcjf.onrender.com
+          uri: lb://CUSTOMER-SERVICE
           predicates:
             - Path=/api/customers/**
           filters:
-            - StripPrefix=1
             - name: CircuitBreaker
               args:
                 id: customerService
                 statusCodes: 500,502,503,504
+        
         - id: vets-service
-          uri: https://vets-service.onrender.com
+          uri: lb://VETS-SERVICE
           predicates:
             - Path=/api/vets/**
           filters:
-            - StripPrefix=1
             - name: CircuitBreaker
               args:
                 id: vetsService
                 statusCodes: 500,502,503,504
+
         - id: visits-service
-          uri: https://visits-service.onrender.com
+          uri: lb://VISITS-SERVICE
           predicates:
             - Path=/api/visits/**,/api/schedule/**
           filters:
-            - StripPrefix=1
             - name: CircuitBreaker
               args:
                 id: visitsService
