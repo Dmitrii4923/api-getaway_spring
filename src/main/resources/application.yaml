@@ -11,7 +11,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${KEYCLOAK_ISSUER_URI}
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:https://keycloak-production-cd3297f4.up.railway.app/realms/hostel}
   cloud:
     gateway:
       server:
