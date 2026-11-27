@@ -105,7 +105,28 @@ const API = (() => {
         saveToken(data.access_token);
         saveRefreshToken(data.refresh_token);
         const claims = decode(data.access_token);
-        return { token: data.access_token, claims, role: roleOf(claims) };
+        const role = roleOf(claims);
+        try {
+            if (role === 'PATIENT') {
+                await fetch(`${BASE}/api/customers/register`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${data.access_token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: claims.name || claims.preferred_username })
+                });
+            } else if (role === 'DOCTOR') {
+                await fetch(`${BASE}/api/vets/register`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${data.access_token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: claims.name || claims.preferred_username,
+                        specialty: 'Врач'
+                    })
+                });
+            }
+        } catch (registerError) {
+            console.warn('Не удалось создать профиль:', registerError);
+        }
+        return { token: data.access_token, claims, role };
     }
 
     async function handleCallback() {
@@ -137,6 +158,19 @@ const API = (() => {
                     });
                 } catch (registerError) {
                     console.warn('Не удалось создать профиль пациента:', registerError);
+                }
+            } else if (role === 'DOCTOR') {
+                try {
+                    await fetch(`${BASE}/api/vets/register`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${data.access_token}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            name: claims.name || claims.preferred_username,
+                            specialty: 'Врач'
+                        })
+                    });
+                } catch (registerError) {
+                    console.warn('Не удалось создать профиль врача:', registerError);
                 }
             }
             return { token: data.access_token, claims, role };
