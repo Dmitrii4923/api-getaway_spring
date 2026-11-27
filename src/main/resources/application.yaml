@@ -25,7 +25,7 @@ spring:
         - id: customer-service
           uri: lb://CUSTOMER-SERVICE
           predicates:
-            - Path=/api/customers/**
+            - Path=/api/customers,/api/customers/**
           filters:
             - name: CircuitBreaker
               args:
@@ -35,7 +35,7 @@ spring:
         - id: vets-service
           uri: lb://VETS-SERVICE
           predicates:
-            - Path=/api/vets/**
+            - Path=/api/vets,/api/vets/**
           filters:
             - name: CircuitBreaker
               args:
@@ -45,7 +45,7 @@ spring:
         - id: visits-service
           uri: lb://VISITS-SERVICE
           predicates:
-            - Path=/api/visits/**,/api/schedule/**
+            - Path=/api/visits,/api/schedule,/api/visits/**,/api/schedule/**
           filters:
             - name: CircuitBreaker
               args:
