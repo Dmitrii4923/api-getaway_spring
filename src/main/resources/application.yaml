@@ -21,6 +21,8 @@ spring:
               uri: ${CUSTOMER_URL:lb://CUSTOMER-SERVICE}
               predicates:
                 - Path=/api/customers,/api/customers/**
+              filters:
+                - RemoveRequestHeader=Accept-Encoding
               metadata:
                 response-timeout: 60000
                 connect-timeout: 60000
@@ -29,6 +31,8 @@ spring:
               uri: ${VETS_URL:lb://VETS-SERVICE}
               predicates:
                 - Path=/api/vets,/api/vets/**
+              filters:
+                - RemoveRequestHeader=Accept-Encoding
               metadata:
                 response-timeout: 60000
                 connect-timeout: 60000
@@ -37,6 +41,8 @@ spring:
               uri: ${VISITS_URL:lb://VISITS-SERVICE}
               predicates:
                 - Path=/api/visits,/api/schedule,/api/visits/**,/api/schedule/**
+              filters:
+                - RemoveRequestHeader=Accept-Encoding
               metadata:
                 response-timeout: 60000
                 connect-timeout: 60000
