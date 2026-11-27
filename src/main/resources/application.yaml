@@ -14,43 +14,50 @@ spring:
           issuer-uri: ${KEYCLOAK_ISSUER_URI}
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-      httpclient:
-        connect-timeout: 30000
-        response-timeout: 120s
-      routes:
-        - id: customer-service
-          uri: lb://CUSTOMER-SERVICE
-          predicates:
-            - Path=/api/customers,/api/customers/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                id: customerService
-                statusCodes: 500,502,503,504
-        
-        - id: vets-service
-          uri: lb://VETS-SERVICE
-          predicates:
-            - Path=/api/vets,/api/vets/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                id: vetsService
-                statusCodes: 500,502,503,504
+      server:
+        webmvc:
+          routes:
+            - id: customer-service
+              uri: lb://CUSTOMER-SERVICE
+              predicates:
+                - Path=/api/customers,/api/customers/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    id: customerService
+                    statusCodes:
+                      - "500"
+                      - "502"
+                      - "503"
+                      - "504"
 
-        - id: visits-service
-          uri: lb://VISITS-SERVICE
-          predicates:
-            - Path=/api/visits,/api/schedule,/api/visits/**,/api/schedule/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                id: visitsService
-                statusCodes: 500,502,503,504
+            - id: vets-service
+              uri: lb://VETS-SERVICE
+              predicates:
+                - Path=/api/vets,/api/vets/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    id: vetsService
+                    statusCodes:
+                      - "500"
+                      - "502"
+                      - "503"
+                      - "504"
+
+            - id: visits-service
+              uri: lb://VISITS-SERVICE
+              predicates:
+                - Path=/api/visits,/api/schedule,/api/visits/**,/api/schedule/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    id: visitsService
+                    statusCodes:
+                      - "500"
+                      - "502"
+                      - "503"
+                      - "504"
 
 eureka:
   client:
