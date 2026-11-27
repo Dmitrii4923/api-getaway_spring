@@ -14,6 +14,13 @@ spring:
           issuer-uri: ${KEYCLOAK_ISSUER_URI}
   cloud:
     gateway:
+      httpclient:
+        connect-timeout: 60000
+        response-timeout: 60s
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
       server:
         webmvc:
           routes:
