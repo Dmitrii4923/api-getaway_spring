@@ -190,12 +190,12 @@ const API = (() => {
         const headers = { Accept: 'application/json', ...(options.headers || {}) };
         if (token) headers.Authorization = `Bearer ${token}`;
         const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 15000);
+        const timer = setTimeout(() => controller.abort(), 60000);
         let response;
         try {
             response = await fetch(`${BASE}${path}`, { ...options, headers, signal: controller.signal });
         } catch (error) {
-            if (error.name === 'AbortError') throw new ApiError('Сервер не ответил за 15 секунд', 0);
+            if (error.name === 'AbortError') throw new ApiError('Сервер не ответил за 60 секунд (сервис просыпается)', 0);
             throw new ApiError('Не удалось связаться с сервером.', 0);
         } finally {
             clearTimeout(timer);
@@ -222,7 +222,7 @@ const API = (() => {
         if (status === 403) return 'Недостаточно прав для этой операции';
         if (status === 404) return 'Данные не найдены';
         if (status === 409) return 'Это время уже занято или недоступно';
-        if (status === 502 || status === 503 || status === 504) return 'Сервис временно недоступен';
+        if (status === 502 || status === 503 || status === 504) return 'Сервис временно недоступен (просыпается)';
         if (status >= 500) return 'Ошибка на сервере';
         return `Запрос завершился с кодом ${status}`;
     }
