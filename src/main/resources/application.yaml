@@ -14,13 +14,6 @@ spring:
           issuer-uri: ${KEYCLOAK_ISSUER_URI}
   cloud:
     gateway:
-      httpclient:
-        connect-timeout: 60000
-        response-timeout: 60s
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
       server:
         webmvc:
           routes:
@@ -28,43 +21,40 @@ spring:
               uri: lb://CUSTOMER-SERVICE
               predicates:
                 - Path=/api/customers,/api/customers/**
+              metadata:
+                response-timeout: 60000
+                connect-timeout: 60000
               filters:
                 - name: CircuitBreaker
                   args:
                     id: customerService
-                    statusCodes:
-                      - "500"
-                      - "502"
-                      - "503"
-                      - "504"
+                    statusCodes: "500,502,503,504"
 
             - id: vets-service
               uri: lb://VETS-SERVICE
               predicates:
                 - Path=/api/vets,/api/vets/**
+              metadata:
+                response-timeout: 60000
+                connect-timeout: 60000
               filters:
                 - name: CircuitBreaker
                   args:
                     id: vetsService
-                    statusCodes:
-                      - "500"
-                      - "502"
-                      - "503"
-                      - "504"
+                    statusCodes: "500,502,503,504"
 
             - id: visits-service
               uri: lb://VISITS-SERVICE
               predicates:
                 - Path=/api/visits,/api/schedule,/api/visits/**,/api/schedule/**
+              metadata:
+                response-timeout: 60000
+                connect-timeout: 60000
               filters:
                 - name: CircuitBreaker
                   args:
                     id: visitsService
-                    statusCodes:
-                      - "500"
-                      - "502"
-                      - "503"
-                      - "504"
+                    statusCodes: "500,502,503,504"
 
 eureka:
   client:
