@@ -18,7 +18,7 @@ spring:
         webmvc:
           routes:
             - id: customer-service
-              uri: lb://CUSTOMER-SERVICE
+              uri: ${CUSTOMER_URL:lb://CUSTOMER-SERVICE}
               predicates:
                 - Path=/api/customers,/api/customers/**
               metadata:
@@ -26,7 +26,7 @@ spring:
                 connect-timeout: 60000
 
             - id: vets-service
-              uri: lb://VETS-SERVICE
+              uri: ${VETS_URL:lb://VETS-SERVICE}
               predicates:
                 - Path=/api/vets,/api/vets/**
               metadata:
@@ -34,7 +34,7 @@ spring:
                 connect-timeout: 60000
 
             - id: visits-service
-              uri: lb://VISITS-SERVICE
+              uri: ${VISITS_URL:lb://VISITS-SERVICE}
               predicates:
                 - Path=/api/visits,/api/schedule,/api/visits/**,/api/schedule/**
               metadata:
